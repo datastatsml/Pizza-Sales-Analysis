@@ -178,18 +178,18 @@ FROM
     SELECT 
 		pizza_name,
 		ROUND(SUM(quantity*price),2) AS revenue,
-        (ROUND(SUM(quantity*price),2) / (SELECT 
-										SUM(revenue) AS Total_revenue
-									FROM
-										(SELECT 
-											pizza_name,
-											ROUND(SUM(quantity*price),2) AS revenue
-										FROM order_details
-											INNER JOIN
-											pizzas ON order_details.pizza_id = pizzas.pizza_id
-											INNER JOIN
-											pizza_types ON pizzas.pizza_type_id = pizza_types.pizza_type_id
-										GROUP BY pizza_name) AS revenue_each_pizza_type)) * 100  AS Percentage_Contributed
+                (ROUND(SUM(quantity*price),2) / (SELECT 
+						     SUM(revenue) AS Total_revenue
+							FROM
+							    (SELECT 
+								pizza_name,
+								ROUND(SUM(quantity*price),2) AS revenue
+								FROM order_details
+									INNER JOIN
+									pizzas ON order_details.pizza_id = pizzas.pizza_id
+									INNER JOIN
+									pizza_types ON pizzas.pizza_type_id = pizza_types.pizza_type_id
+									GROUP BY pizza_name) AS revenue_each_pizza_type)) * 100  AS Percentage_Contributed
 	FROM order_details
 		INNER JOIN
 		pizzas ON order_details.pizza_id = pizzas.pizza_id
@@ -216,19 +216,19 @@ FROM
 
 
 -- determine the top 3 most ordered pizza types based on revenue of each pizza category
-SELECT *
-FROM
+          SELECT *
+          FROM
 		(SELECT 
 			category,
 			pizza_name,
 			SUM(quantity * price) AS revenue,
-			RANK() OVER(PARTITION BY category ORDER BY SUM(quantity * price) DESC) AS top_rank
+			RANK() OVER(PARTITION BY category ORDER BY SUM(quantity * price) DESC) AS top_rank			
 		FROM order_details
 			INNER JOIN
 			pizzas ON order_details.pizza_id = pizzas.pizza_id
 			INNER JOIN
 			pizza_types ON pizzas.pizza_type_id = pizza_types.pizza_type_id
 		GROUP BY category, pizza_name) AS top_ranked_pizzas
-WHERE top_rank <=3;
+         WHERE top_rank <=3;
 
 -- https://www.youtube.com/watch?v=zZpMvAedh_E 
